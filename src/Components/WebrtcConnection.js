@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 
 const configuration = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]}
 const peerConnection = new RTCPeerConnection(configuration);
@@ -7,24 +7,46 @@ function WebrtcConnection() {
     const [message, setMessage] = useState('no messages yet');
     const [remoteMessage, setRemoteMessage] = useState('No Messages yet')
 
-    const createOffer = async () => {
-        console.log('first button');
+    // const createOffer = async () => {
+    //     console.log('first button');
+    //     peerConnection.createOffer().then((desc)=>{
+    //         peerConnection.setLocalDescription(desc);
+    //         const newOffer = JSON.stringify(desc);
+    //         // document.getElementById('offer').innerHTML= newOffer;
+    //         // console.log(JSON.stringify(peerConnection.localDescription));
+
+    //         document.getElementById("button1").onclick = async () =>{
+    //             console.log('2ndbutton');
+    //             const answer = (document.getElementById("input1").value);
+    //             console.log(answer);
+    //             const remoteDesc = new RTCSessionDescription(JSON.parse(answer));
+    //             peerConnection.setRemoteDescription(remoteDesc);
+    //             console.log(answer);
+    //         }
+    //     })
+    //     console.log('test');
+    // }
+
+    const printOffer = () =>{
+        // console.log();
+        document.getElementById('offer').innerHTML= JSON.stringify(peerConnection.localDescription);
+    }
+
+    const createOffer = ()  => {
         peerConnection.createOffer().then((desc)=>{
             peerConnection.setLocalDescription(desc);
-            const newOffer = JSON.stringify(desc);
-            document.getElementById('offer').innerHTML= newOffer;
-            console.log(newOffer);
-
-            document.getElementById("button1").onclick = async () =>{
-                console.log('2ndbutton');
-                const answer = (document.getElementById("input1").value);
-                console.log(answer);
-                const remoteDesc = new RTCSessionDescription(JSON.parse(answer));
-                peerConnection.setRemoteDescription(remoteDesc);
-                console.log(answer);
-            }
-        });
+            console.log('offer Created');
+    })
     }
+
+    const connect = () => {
+        console.log('connecting');
+        const answer = (document.getElementById("input1").value);
+        const remoteDesc = new RTCSessionDescription(JSON.parse(answer));
+        peerConnection.setRemoteDescription(remoteDesc);
+        console.log(answer);
+    }
+
 
     peerConnection.addEventListener('connectionstatechange', event => {
         if (peerConnection.connectionState === 'connected') {
@@ -57,13 +79,14 @@ function WebrtcConnection() {
             <h1>Generate Offer</h1>
             <p id='offer'>No Offer yet</p>
             <button onClick = {createOffer}>Create Offer</button>
+            <button onClick = {printOffer}>Print Offer</button>
             <h1>Enter your Answer below </h1>
             <form>
                 <label>Answer: </label>
                 <input id='input1' type='text'/>
             </form>
             <h3 id='status' style={{color: 'red'}}>No Connection Yet</h3>
-            <button id='button1'>Connect</button>
+            <button id='button1' onClick={connect}>Connect</button>
             <div>
             <h1>New Messages from Remote</h1>
             <p>{remoteMessage}</p>
